@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
+	"golang.org/x/term"
 )
 
 type Level int
@@ -45,7 +46,12 @@ func GetLevel() Level {
 }
 
 func init() {
-	out := zerolog.ConsoleWriter{TimeFormat: time.RFC3339, Out: os.Stdout}
+	noTerm := !term.IsTerminal(int(os.Stdout.Fd()))
+	out := zerolog.ConsoleWriter{
+		TimeFormat: time.RFC3339,
+		Out:        os.Stdout,
+		NoColor:    noTerm,
+	}
 	zLog = zerolog.New(out).With().Timestamp().Logger()
 }
 
